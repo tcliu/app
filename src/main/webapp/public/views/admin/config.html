@@ -1,0 +1,65 @@
+<script type="text/ng-template" id="data-renderer.html">
+	<div class="panel-body" ng-show="!isObject(v)">{{v}}</div>
+	<table class="table table-striped" ng-show="isObject(v)">
+		<tbody>
+			<tr ng-repeat="(k, v) in v">
+				<td><label>{{k}}</label></td>
+				<td>{{v}}</td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+<div class="row" ng-controller="configController">
+	<div class="col-lg-6">
+		<form role="form" ng-submit="evaluateBeanValue(expression)">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Enter expression" name="expression" id="expression"
+					ng-model="expression" ng-keyup="changeExpression($event)" />
+				<div class="input-group-btn">
+					<button class="btn btn-default" type="submit">GET</button>
+					<button class="btn btn-default" type="button" ng-click="evaluateBeanValue(expression, 'POST')">POST</button>
+				</div>
+				<div class="input-group-btn">
+					<button class="btn btn-default" type="button" ng-click="clearQueries()">Clear</button>
+				</div>
+				<div class="input-group-btn">
+					<button class="btn btn-default" type="button" ng-click="refreshBeans()">Refresh</button>
+				</div>
+			</div>
+		</form>
+		<table class="table table-striped">
+			<tbody>
+				<tr ng-repeat="beanName in filteredBeanNames">
+					<td style="max-width: 300px; word-wrap: break-word;" ng-click="fillExpression(beanName)">{{ beanName }}</td>
+				</tr>
+			</tbody>
+		</table>
+		<ul class="pagination">
+			<li><a href="#">1</a></li>
+			<li><a href="#">2</a></li>
+			<li><a href="#">3</a></li>
+			<li class="disabled"><a href="#">4</a></li>
+			<li><a href="#">5</a></li>
+		</ul>
+	</div>
+	<div class="col-lg-6">
+		<div class="panel panel-default"
+			ng-repeat="(i, q) in queries | filter:isDisplayed | orderBy:'index':true | limitTo:10" style="margin: 10px 0 0 0;">
+			<div class="panel-heading">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="removeQuery(q.index)">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h3 class="panel-title">{{q.expression}}</h3>
+			</div>
+			<div class="panel-body" ng-show="!isObject(q.response.data)">{{q.response.data}}</div>
+			<table class="table table-striped" ng-show="isObject(q.response.data)">
+				<tbody>
+					<tr ng-repeat="(k, v) in q.response.data">
+						<td width="20%"><label>{{k}}</label></td>
+						<td width="80%" ng-init="data=v">{{data}}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

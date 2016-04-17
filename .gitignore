@@ -1,0 +1,9 @@
+# ignore list
+.classpath
+.project
+.settings
+.gradle
+data
+target
+build
+bin
