@@ -1,16 +1,85 @@
 'use strict';
 
-var app = angular.module('adminApp', ['ngRoute']);
+var app = angular.module('adminApp', ['ui.router']);
 
-app.controller('systemController', ['$scope', '$http', ($scope, $http) => {
+app.factory('util', () => {
+	var self = {
+		obj2arr: (obj) => Object.keys(obj).map((k, i) => ({id: i, key: k, value: obj[k]})),
+		filter: (dataContext, query) => {
+			if (dataContext.data) {
+				dataContext.filtered = self.filterItems(dataContext.data, query, dataContext.page, dataContext.pageSize);
+			}
+		},
+		filterItems: (items, query, page, pageSize) => {
+			if (items) {
+				if (query)
+					items = items.filter(item => item.key.indexOf(query) != -1);
+				var maxPage = Math.ceil(items.length / pageSize);
+				if (page > maxPage)
+					page = maxPage;
+				items = items.slice((page - 1) * pageSize, page * pageSize);
+			}
+			return items;
+		}
+	};
+	return self;
+});
+
+app.controller('adminController', ['$scope', ($scope) => {
 	
+	$scope.routes = [
+		{label: 'Configuration', href: '#/config'},
+		{label: 'System', href: '#/system'},
+		{label: 'About', href: '#/about'}
+	];
+	
+	$scope.getCssClass = (href) => href == window.location.hash ? 'active' : '';
+	
+}]);
+
+app.controller('systemController', ['$scope', '$filter', '$http', 'util', ($scope, $filter, $http, util) => {
+	
+	$scope.systemProperties = {page: 1, pageSize: 20, editState: {}};
+
 	$scope.updateSystemProperties = () => {
 		$http.get('config/sys-props').success(data => {
-			$scope.systemProperties = data;
+			$scope.systemProperties.data = util.obj2arr(data);
+			$scope.systemProperties.pageCount = Math.ceil($scope.systemProperties.data.length / $scope.systemProperties.pageSize);
+			$scope.systemProperties.pageNums = [];
+			for (var i=0; i<$scope.systemProperties.pageCount; i++) {
+				$scope.systemProperties.pageNums.push(i+1);
+			}
+			util.filter($scope.systemProperties, $scope.propKey);
+			angular.element('#propKey').focus();
 		});
 	};
 	
+	$scope.changePage = (pageNum) => {
+		$scope.systemProperties.page = pageNum;
+		util.filter($scope.systemProperties, $scope.propKey);
+		angular.element('#propKey').focus();
+	}
+	
+	$scope.getCssClass = (href) => href == window.location.hash ? 'active' : '';
+	
+	$scope.editRecord = (id, $event) => {
+		var state = $scope.systemProperties.editState[id] = !$scope.systemProperties.editState[id];
+		if (state) {
+			// edit mode
+			setTimeout(() => angular.element(`[name='text${id}']`).focus(), 200);
+		} else {
+			// after editing
+			var v = $scope.systemProperties.data[id].value = $event.currentTarget.value;
+			$http({method: 'POST', url: 'config/sys-props', data: $scope.systemProperties.data[id]})
+				.then(resp => {})
+				.then(resp => console.log(resp));
+		}
+	};
+	
 	$scope.updateSystemProperties();
+
+	$scope.$watch('propKey', (val, o_val) => util.filter($scope.systemProperties, $scope.propKey));
+	
 }]);
 
 app.controller('aboutController', ['$scope', ($scope) => {
@@ -101,7 +170,7 @@ app.controller('configController', ['$scope', '$filter', '$http', ($scope, $filt
 }]);
 	
 app.filter('search', () => 
-	(items, query) => items ? items.filter(item => !query || item.indexOf(query) != -1).sort() : null
+	(items, query) => items && query ? items.filter(item => item.indexOf(query) != -1).sort() : items
 );
 
 app.directive('dataView', () => {
@@ -120,11 +189,33 @@ angular.module('configServices', ['ngResource'])
 
 	}]); */
 
-
+/*
 app.config(['$routeProvider', $routeProvider => {
 	$routeProvider
 		.when('/config', {templateUrl: 'public/views/admin/config.html', controller: 'configController'})
 		.when('/system', {templateUrl: 'public/views/admin/system.html', controller: 'systemController'})
+		.when('/system/:num', {templateUrl: 'public/views/admin/system.html', controller: 'systemController'})
 		.when('/about', {templateUrl: 'public/views/admin/about.html', controller: 'aboutController'});
+}]);
+*/
+
+app.config(['$stateProvider', '$urlRouterProvider', ($stateProvider, $urlRouterProvider) => {
+	// For any unmatched url, redirect to /state1
+	//$urlRouterProvider.otherwise("/config");
+	// Now set up the states
+	  $stateProvider
+	    .state('config', {
+	      url: '/config',
+	      templateUrl: 'public/views/admin/config.html'
+	    })
+	    .state('system', {
+	      url: '/system',
+	      templateUrl: 'public/views/admin/system.html'
+	    })
+	    .state('about', {
+	      url: '/about',
+	      templateUrl: 'public/views/admin/about.html'
+	    });
+	
 }]);
 

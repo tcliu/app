@@ -9,17 +9,34 @@
 	<context:component-scan base-package="org.codelab.app.config" />
 	<context:component-scan base-package="org.codelab.app.service" />
 	<context:component-scan base-package="org.codelab.app.dao" />
-
+	
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="propertiesArray">
+			<array>
+				<ref bean="propertiesFactoryBean" />
+				<ref bean="yamlPropertiesFactoryBean" />
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="propertiesFactoryBean" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations" value="file:${config.dir:${user.home}/config}/${config.properties:*.properties}" />
+	</bean>
+	
+	<bean id="yamlPropertiesFactoryBean" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
+		<property name="resources" value="file:${config.dir:${user.home}/config}/${config.yml:*.yml}" />
+	</bean>
+	
 	<util:map id="map1">
-		<entry key="a" value="123" />
-		<entry key="b" value="123" />
+		<entry key="a" value="${map1.a:}" />
+		<entry key="b" value="${map2.b:}" />
 	</util:map>
 		
 	<util:map id="map2">
-		<entry key="a" value="123" />
-		<entry key="b" value="123" />
+		<entry key="a" value="${map2.a:}" />
+		<entry key="b" value="${map2.b:}" />
 	</util:map>
 		
-	<import resource="file:${config.dir:${user.home}/config}/${config.file:*.xml}" />
+	<import resource="file:${config.dir:${user.home}/config}/${config.xml:*.xml}" />
 		
 </beans>

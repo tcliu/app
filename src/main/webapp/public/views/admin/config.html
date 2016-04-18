@@ -58,6 +58,9 @@
 						<td width="20%"><label>{{k}}</label></td>
 						<td width="80%" ng-init="data=v">{{data}}</td>
 					</tr>
+					<tr>
+						<td colspan="2" ng:show="!q.response.data">No record</td>
+					</tr>
 				</tbody>
 			</table>
 		</div>

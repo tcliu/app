@@ -13,4 +13,6 @@ public interface ConfigurationService {
 	void refreshApplicationContext();
 	
 	Map<Object,Object> getSystemProperties();
+	
+	void setSystemProperty(String key, String value);
 }

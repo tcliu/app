@@ -100,6 +100,11 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	public Map<Object,Object> getSystemProperties() {
 		return new TreeMap<Object,Object>(System.getProperties());
 	}
+	
+	@Override
+	public void setSystemProperty(String key, String value) {
+		System.setProperty(key, value);
+	}
 
 	private <T> T getBeanQuietly(String beanName) {
 		try {

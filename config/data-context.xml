@@ -6,11 +6,12 @@
 						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 						
-	<util:map id="map1">
-		<entry key="a" value="123" />
-		<entry key="b" value="456" />
+	<util:map id="map2">
+		<entry key="a" value="${map2.a:}" />
+		<entry key="b" value="${map2.b:}" />
+		<entry key="c" value="${map2.c:}" />
 	</util:map>
-	
+
 	<import resource="file:${config.dir}/sub/sub-context.xml" />
 	
 </beans>

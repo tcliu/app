@@ -12,13 +12,20 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="(k, v) in systemProperties">
-					<td>{{k}}</td>
-					<td style="max-width: 300px; word-wrap: break-word;">
-						<span>{{v}}</span>
+				<tr ng-repeat="systemProperty in systemProperties.filtered">
+					<td width="30%">{{systemProperty.key}}</td>
+					<td width="70%" style="max-width: 300px; word-wrap: break-word;">
+						<span ng-click="editRecord(systemProperty.id, $event)" ng-show="!systemProperties.editState[systemProperty.id]">{{systemProperty.value}}</span>
+						<textarea name="text{{systemProperty.id}}" class="form-control" ng-blur="editRecord(systemProperty.id, $event)" ng-show="systemProperties.editState[systemProperty.id]">{{systemProperty.value}}</textarea>
 					</td>
+				</tr>
+				<tr>
+					<td colspan="2" ng:show="!systemProperties.filtered.length">No record</td>
 				</tr>
 			</tbody>
 		</table>
+		<ul class="pagination" ng-show="systemProperties.data.length > systemProperties.pageSize">
+			<li ng:class="getCssClass('#/system/{{pageNum}}')" ng-click="changePage(pageNum)" ng-repeat="pageNum in systemProperties.pageNums"><a ng:href="#/system/{{pageNum}}">{{pageNum}}</a></li>
+		</ul>
 	</form>
 </div>

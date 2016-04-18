@@ -5,26 +5,27 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-						
-	<context:property-placeholder location="file:${config.dir}/sub/sub.properties" />
-						
-	<util:map id="map2">
-		<entry key="a" value="${a}" />
-		<entry key="b" value="${b}" />
-		<entry key="c" value="${c}" />
-	</util:map>
-	
-	<util:map id="map3">
-		<entry key="a" value="${a}" />
-		<entry key="b" value="${b}" />
-		<entry key="c" value="${c}" />
-	</util:map>
 	
 	<util:list id="list1">
-		<value>1</value>
-		<value>2</value>
-		<value>3</value>
+		<value>${list1[0]:}</value>
+		<value>${list1[1]:}</value>
+		<value>${list1[2]:}</value>
 	</util:list>
+							
+	<util:map id="map3">
+		<entry key="a" value="${map3.a:}" />
+		<entry key="b" value="${map3.b:}" />
+		<entry key="c" value="${map3.c:}" />
+	</util:map>
+		
+	<util:map id="map4">
+		<entry key="a" value="${map4.a:}" />
+		<entry key="b" value="${map4.b:}" />
+	</util:map>
 	
+	<util:map id="map5">
+		<entry key="a" value="${map5.a:}" />
+		<entry key="b" value="${map5.b:}" />
+	</util:map>
 	
 </beans>

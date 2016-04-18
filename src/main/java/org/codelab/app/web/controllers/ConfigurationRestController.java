@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.HandlerMapping;
 
 @RestController
-@RequestMapping(value = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/config", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class ConfigurationRestController {
 
 	private AntPathMatcher antPathMatcher;
@@ -61,6 +61,12 @@ public class ConfigurationRestController {
 	@RequestMapping(value = "/sys-props", method = RequestMethod.GET)
 	public Map<Object,Object> getSystemProperties() {
 		return configService.getSystemProperties();
+	}
+	
+	@RequestMapping(value = "/sys-props", method = RequestMethod.POST)
+	public ResponseEntity<Boolean> setSystemProperties(@RequestBody Map<String,String> payload) {
+		configService.setSystemProperty(payload.get("key"), payload.get("value"));
+		return new ResponseEntity<Boolean>(Boolean.TRUE, HttpStatus.OK);
 	}
 	
 	@ExceptionHandler(Exception.class)
