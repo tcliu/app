@@ -27,7 +27,7 @@
 				</div>
 				<div id="navbar" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
-						<li ng:class="getCssClass(route.href)" ng:repeat="route in routes"><a ng:href="{{route.href}}">{{route.label}}</a></li>					
+						<li ui-sref-active="active" ng:repeat="route in routes"><a ui-sref="{{route.ref}}">{{route.label}}</a></li>					
 					</ul>
 				</div>
 				<!--/.nav-collapse -->

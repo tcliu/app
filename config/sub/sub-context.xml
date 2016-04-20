@@ -21,11 +21,13 @@
 	<util:map id="map4">
 		<entry key="a" value="${map4.a:}" />
 		<entry key="b" value="${map4.b:}" />
+		<entry key="welcome" value="${welcome}" />
 	</util:map>
 	
 	<util:map id="map5">
 		<entry key="a" value="${map5.a:}" />
 		<entry key="b" value="${map5.b:}" />
+		<entry key="c" value="#{map1['c']}" />
 	</util:map>
 	
 </beans>

@@ -28,9 +28,9 @@ app.factory('util', () => {
 app.controller('adminController', ['$scope', ($scope) => {
 	
 	$scope.routes = [
-		{label: 'Configuration', href: '#/config'},
-		{label: 'System', href: '#/system'},
-		{label: 'About', href: '#/about'}
+		{label: 'Configuration', ref: 'config'},
+		{label: 'System', ref: 'system'},
+		{label: 'About', ref: 'about'}
 	];
 	
 	$scope.getCssClass = (href) => href == window.location.hash ? 'active' : '';
@@ -108,10 +108,10 @@ app.controller('configController', ['$scope', '$filter', '$http', ($scope, $filt
 			$scope.queries.push($scope.currentQuery);
 			$scope.queryIndex = $scope.currentQuery.index;
 			var httpConfig;
-			if (httpMethod == 'POST') {
-				httpConfig = {method: 'POST', url: 'config/expr', data: {e: expression}};
-			} else {
+			if (httpMethod == 'GET') {
 				httpConfig = {method: 'GET', url: 'config/expr/' + encodeURIComponent(expression)};
+			} else {
+				httpConfig = {method: 'POST', url: 'config/expr', data: {e: expression}};
 			}
 			$http(httpConfig).then(response => {
 				$scope.currentQuery.response = response;
@@ -212,10 +212,15 @@ app.config(['$stateProvider', '$urlRouterProvider', ($stateProvider, $urlRouterP
 	      url: '/system',
 	      templateUrl: 'public/views/admin/system.html'
 	    })
+	    .state('system.page', {
+	      url: '/system/:page',
+	      templateUrl: 'public/views/admin/system.html'
+	    })
 	    .state('about', {
-	      url: '/about',
-	      templateUrl: 'public/views/admin/about.html'
+	    	url: '/about',
+		    templateUrl: 'public/views/admin/about.html'
 	    });
+	  	
 	
 }]);
 

@@ -4,10 +4,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.codelab.app.service.ConfigurationService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +28,7 @@ public class ConfigurationRestController {
 
 	private AntPathMatcher antPathMatcher;
 
-	@Autowired
+	@Resource
 	private ConfigurationService configService;
 	
 	@PostConstruct
@@ -41,15 +42,15 @@ public class ConfigurationRestController {
 	}
 
 	@RequestMapping(value = "/expr/**", method = RequestMethod.GET)
-	public ResponseEntity<Object> evaluateBeanValue(HttpServletRequest request) {
+	public ResponseEntity<Object> evaluateBeanValue(HttpServletRequest request) throws ScriptException {
 		String expression = extractPattern(request);
-		return evaluateBeanValue(expression, request.getMethod());
+		return evaluateBeanValue(expression);
 	}
 	
-	@RequestMapping(value = "/expr", method = RequestMethod.POST)
-	public ResponseEntity<Object> evaluateBeanValue(@RequestBody Map<String,Object> payload, HttpServletRequest request) {
+	@RequestMapping(value = "/expr", method = {RequestMethod.GET, RequestMethod.POST})
+	public ResponseEntity<Object> evaluateBeanValue(@RequestBody Map<String,Object> payload, HttpServletRequest request) throws ScriptException {
 		String expression = (String) payload.get("e");
-		return evaluateBeanValue(expression, request.getMethod());
+		return evaluateBeanValue(expression);
 	}
 	
 	@RequestMapping(value = "/refresh", method = {RequestMethod.GET, RequestMethod.POST})
@@ -82,8 +83,8 @@ public class ConfigurationRestController {
 		return antPathMatcher.extractPathWithinPattern(bestMatchPattern, path);
 	}
 	
-	private ResponseEntity<Object> evaluateBeanValue(String expression, String requestMethod) {
-		Object o = configService.evaluateBeanValue(expression, RequestMethod.POST.name().equals(requestMethod));
+	private ResponseEntity<Object> evaluateBeanValue(String expression) throws ScriptException {
+		Object o = configService.evaluateExpression(expression);
 		if (o == null || o instanceof CharSequence || ClassUtils.isPrimitiveOrWrapper(o.getClass())) {
 			HttpHeaders responseHeaders = new HttpHeaders();
 		    responseHeaders.setContentType(MediaType.TEXT_PLAIN);

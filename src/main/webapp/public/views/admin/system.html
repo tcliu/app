@@ -25,7 +25,7 @@
 			</tbody>
 		</table>
 		<ul class="pagination" ng-show="systemProperties.data.length > systemProperties.pageSize">
-			<li ng:class="getCssClass('#/system/{{pageNum}}')" ng-click="changePage(pageNum)" ng-repeat="pageNum in systemProperties.pageNums"><a ng:href="#/system/{{pageNum}}">{{pageNum}}</a></li>
+			<li ui-sref-active="active" ng-click="changePage(pageNum)" ng-repeat="pageNum in systemProperties.pageNums"><a ui-sref="system.page({page: pageNum})">{{pageNum}}</a></li>
 		</ul>
 	</form>
 </div>
